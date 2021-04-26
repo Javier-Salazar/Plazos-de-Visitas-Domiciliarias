@@ -1,0 +1,288 @@
+﻿<Window x:Class="UI_Plazos.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:UI_Plazos"
+        mc:Ignorable="d"
+        Title="Plazos de visita domiciliaria" Height="635" Width="1130" MinHeight="450" MinWidth="800"
+        Background="#F3F3F5" WindowStartupLocation="Manual" Left="10" Top="10" Loaded="Window_Loaded"
+        Icon="calendar.ico">
+
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="200"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid Margin="65 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="536"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Plazos de visita domiciliaria" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="40" FontWeight="Bold" FontFamily="Century Gothic" Foreground="#8E96AD"/>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="55"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto" MaxWidth="165"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto" MaxWidth="245"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
+                                        <Label Name="nombreEmpty" Content="**" FontSize="14" Foreground="Red" Visibility="Collapsed"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal">
+                                        <TextBox x:Name="nombreContribuyente" materialDesign:HintAssist.Hint="Nombre del contribuyente" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="14 0 5 0" FontSize="12" MaxWidth="165"  FlowDirection="LeftToRight"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                                        <Label Name="pickerEmpty" Content="**" FontSize="14" Foreground="Red" Visibility="Collapsed"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" FlowDirection="LeftToRight">
+                                        <DatePicker Name="fecha" Width="auto" materialDesign:HintAssist.Hint="Elegir fecha" HorizontalAlignment="Left" SelectedDateFormat="Long" IsTodayHighlighted="True" FirstDayOfWeek="Sunday" VerticalAlignment="Top" Style="{StaticResource MaterialDesignOutlinedDatePicker}">
+                                            <DatePicker.BlackoutDates>
+                                                <CalendarDateRange Start="02/01/2021" End="02/01/2021"/>
+                                                <CalendarDateRange Start="03/15/2021" End="03/15/2021"/>
+                                                <CalendarDateRange Start="04/01/2021" End="04/01/2021"/>
+                                                <CalendarDateRange Start="04/02/2021" End="04/02/2021"/>
+                                                <CalendarDateRange Start="11/15/2021" End="11/15/2021"/>
+                                                <!--this dates can change-->
+                                                <CalendarDateRange Start="02/07/2022" End="02/07/2022"/>
+                                                <CalendarDateRange Start="03/14/2022" End="03/14/2022"/>
+                                                <CalendarDateRange Start="04/14/2022" End="04/14/2022"/>
+                                                <CalendarDateRange Start="04/15/2022" End="04/15/2022"/>
+                                                <CalendarDateRange Start="11/14/2022" End="11/14/2022"/>
+                                            </DatePicker.BlackoutDates>
+                                        </DatePicker>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 14 0 0" HorizontalAlignment="Right">
+                                <ToggleButton x:Name="extendido" Style="{StaticResource MaterialDesignSwitchToggleButton}" Checked="extendido_Checked" Unchecked="extendido_Unchecked"/>
+                                <Label x:Name="modoPlazo" Content="Plazo extendido desactivado" FontFamily="Century Gothic" FontSize="12" FontWeight="DemiBold" Foreground="#999999" Margin="14 0 0 0" Width="180"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 14">
+                                <Button x:Name="Create" Content="Generar fecha" Style="{StaticResource MaterialDesignRaisedButton}" Visibility="Visible" Click="Create_Click"/>
+                                <Button x:Name="Update" Content="Actualizar fecha" Style="{StaticResource MaterialDesignOutlinedButton}" Visibility="Collapsed" Click="Update_Click" Margin="24 0 0 0"/>
+                                <Button x:Name="Cancel" Content="Cancelar" Style="{StaticResource MaterialDesignOutlinedButton}" Visibility="Collapsed" Click="Cancel_Click" Margin="14 0 0 0" Foreground="OrangeRed" BorderBrush="OrangeRed"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Border Grid.Row="1" Margin="65 0 65 65" Background="White" CornerRadius="6">
+                <Border.BitmapEffect>
+                    <DropShadowBitmapEffect ShadowDepth="2" Softness="0.8" Opacity="0.2" Direction="260" Color="#D1D1D1"/>
+                </Border.BitmapEffect>
+                <ListView x:Name="UAP" Grid.Row="1" HorizontalContentAlignment="Center">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="SnapsToDevicePixels" Value="True" />
+                            <Setter Property="OverridesDefaultStyle" Value="True" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            <Setter Property="FontSize" Value="14"/>
+                            <Setter Property="FontFamily" Value="Century Gothic"/>
+                            <Setter Property="FontWeight" Value="Regular"/>
+                            <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Border" Padding="25 15" Background="{TemplateBinding Background}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0 0 0 1" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                            <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignTextBoxBorder}" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignSelection}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignDivider}" />
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelected" Value="True" />
+                                        <Condition Property="Selector.IsSelectionActive" Value="False" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" Value="#F3F3F5" />
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelected" Value="True" />
+                                        <Condition Property="Selector.IsSelectionActive" Value="True" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+                                </MultiTrigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Opacity" Value=".56" />
+                                </Trigger>
+                                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignDivider}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="False" x:Name="header">
+                            <GridViewColumn Header="Contribuyente" Width="auto" DisplayMemberBinding="{Binding contribuyente}"/>
+                            <GridViewColumn Header="Fecha de inicio" Width="auto" DisplayMemberBinding="{Binding fecha_inicio}"/>
+                            <GridViewColumn Header="Plazo extendido" Width="auto" DisplayMemberBinding="{Binding plazo_extendido}"/>
+                            <GridViewColumn Header="Entrega expediente y convenio para revisión" Width="auto" DisplayMemberBinding="{Binding entrega_expediente}"/>
+                            <GridViewColumn Header="Comité" Width="auto" DisplayMemberBinding="{Binding comite}"/>
+                            <GridViewColumn Header="Notificación de atenta invitación" Width="auto" DisplayMemberBinding="{Binding notificacion_atenta}"/>
+                            <GridViewColumn Header="Vencimiento 10 días atenta invitación" Width="auto" DisplayMemberBinding="{Binding vencimiento_10_dias}"/>
+                            <GridViewColumn Header="Entrega borrador UAP para revisión" Width="auto" DisplayMemberBinding="{Binding entrega_borrador_uap}"/>
+                            <GridViewColumn Header="Entrega UAP" Width="auto" DisplayMemberBinding="{Binding entrega_uap}"/>
+                            <GridViewColumn Header="Recepción UAP" Width="auto" DisplayMemberBinding="{Binding recepcion_uap}"/>
+                            <GridViewColumn Header="Segunda vuelta UAP" Width="auto" DisplayMemberBinding="{Binding sengunda_vuelta_uap}"/>
+                            <GridViewColumn Header="Levantamiento UAP" Width="auto" DisplayMemberBinding="{Binding levantamiento_uap}"/>
+                            <GridViewColumn Header="Vence UAP" Width="auto" DisplayMemberBinding="{Binding vence_uap}"/>
+                            <GridViewColumn Header="Levantamiento acta final" Width="auto" DisplayMemberBinding="{Binding levantamiento_acta_final}"/>
+                            <GridViewColumn Header="Días de estrados" Width="auto" DisplayMemberBinding="{Binding dias_estrados}"/>
+                            <GridViewColumn Header="Vencimiento de plazo" Width="auto" DisplayMemberBinding="{Binding vence_plazo}"/>
+                            <GridViewColumn Header="Diás sobrantes" Width="auto" DisplayMemberBinding="{Binding dias_sobrantes}"/>
+                            <GridViewColumn Header="Liquidación" Width="auto" DisplayMemberBinding="{Binding liquidacion}"/>
+                            <GridViewColumn Header="Entrega borrador liquidación pare revisión" Width="auto" DisplayMemberBinding="{Binding entrega_borrador_liquidacion}"/>
+                            <GridViewColumn Header="Entrega liquidación" Width="auto" DisplayMemberBinding="{Binding entrega_liquidacion}"/>
+                            <GridViewColumn Header="Recepción liquidación" Width="auto" DisplayMemberBinding="{Binding recepcion_liquidacion}"/>
+                            <GridViewColumn Header="Segunda vuelta liquidación" Width="auto" DisplayMemberBinding="{Binding segunda_vuelta_liquidacion}"/>
+                            <GridViewColumn Header="Impresión y envío a firma" Width="auto" DisplayMemberBinding="{Binding impresion_firma}"/>
+                            <GridViewColumn Header="Fecha de cierre" Width="auto" DisplayMemberBinding="{Binding fecha_cierre}"/>
+                            <GridView.ColumnHeaderContainerStyle>
+                                <Style TargetType="GridViewColumnHeader">
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="FontWeight" Value="DemiBold" />
+                                    <Setter Property="OverridesDefaultStyle" Value="True" />
+                                    <Setter Property="FontFamily" Value="Century Gothic"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="Padding" Value="{Binding RelativeSource={RelativeSource Self}, Path=(materialDesign:DataGridAssist.ColumnHeaderPadding)}"/>
+                                    <Setter Property="Foreground" Value="#3E464F"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewColumnHeader">
+                                                <DockPanel>
+                                                    <Border x:Name="HeaderBorder" Padding="{TemplateBinding Padding}" BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <ContentPresenter x:Name="HeaderContent" Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                    </Border>
+                                                </DockPanel>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="Role" Value="Floating">
+                                            <Setter Property="Opacity" Value="0.7" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="GridViewColumnHeader">
+                                                        <DockPanel Name="PART_FloatingHeaderCanvas">
+                                                            <Border BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="1" />
+                                                        </DockPanel>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                        <Trigger Property="Role" Value="Padding">
+                                            <Setter Property="Opacity" Value="0.7" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="GridViewColumnHeader">
+                                                        <Canvas Name="PART_FloatingHeaderCanvas" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </GridView.ColumnHeaderContainerStyle>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Border>
+            <Canvas Grid.Row="1">
+                <materialDesign:Snackbar x:Name="SnackbarThree" MessageQueue="{materialDesign:MessageQueue}" Message="¡Bienvenido!" Canvas.Bottom="5" Canvas.Left="65"/>
+            </Canvas>
+        </Grid>
+        <materialDesign:DrawerHost x:Name="DrawerHost" Margin="0" BorderThickness="0" BorderBrush="{DynamicResource MaterialDesignDivider}">
+            <materialDesign:DrawerHost.Style>
+                <Style TargetType="materialDesign:DrawerHost" BasedOn="{StaticResource {x:Type materialDesign:DrawerHost}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=BackgroundToggle}" Value="True">
+                            <Setter Property="OverlayBackground" Value="{DynamicResource PrimaryHueMidBrush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </materialDesign:DrawerHost.Style>
+            <materialDesign:DrawerHost.RightDrawerContent>
+                <Border CornerRadius="8" Width="300" Background="White" HorizontalAlignment="Center">
+                    <Grid Margin="21 20 21 16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="48"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Label Content="Plazos próximos a vencer" FontFamily="Cetury Gothic" FontSize="20" FontWeight="DemiBold" Padding="0"/>
+                        </StackPanel>
+                        <Grid Grid.Row="1">
+                            <Border CornerRadius="4" Background="#FFFBFBFB">
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+                                        <StackPanel x:Name="porVencer" Grid.Row="0" Orientation="Vertical">
+                                            <Label Name="todoBien" Content="Parece que todo va bien" FontSize="16" FontWeight="Regular" FontFamily="Century Gothic" Margin="0 6 0 14" Visibility="Collapsed"/>
+                                            <StackPanel x:Name="porVencerTitle" Orientation="Horizontal" Margin="0 6 0 14" Visibility="Collapsed">
+                                                <Label Content="Plazos por vencer" FontSize="16" FontWeight="DemiBold" FontFamily="Century Gothic"/>
+                                                <Ellipse Fill="#FFDB4A" Height="14" Width="14" Margin="14 0 0 0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel x:Name="vencio" Grid.Row="1" Orientation="Vertical">
+                                            <StackPanel x:Name="vencidoTitle" Orientation="Horizontal" Margin="0 6 0 14" Visibility="Collapsed">
+                                                <Label Content="Plazos vencidos" FontSize="16" FontWeight="DemiBold" FontFamily="Century Gothic"/>
+                                                <Ellipse Fill="#FF6B6B" Height="14" Width="14" Margin="14 0 0 0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom">
+                            <Button Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}" CommandParameter="{x:Static Dock.Right}" Style="{StaticResource MaterialDesignFlatButton}" Content="Aceptar"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </materialDesign:DrawerHost.RightDrawerContent>
+            <Canvas>
+                <Label Content="Estado" FontFamily="Century Gothic" FontSize="12" Canvas.Bottom="36" Canvas.Right="93" Padding="0"/>
+                <Button x:Name="status" Command="{x:Static materialDesign:DrawerHost.OpenDrawerCommand}" CommandParameter="{x:Static Dock.Right}" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" ToolTip="Plazos próximos a vencer" Canvas.Bottom="37" Canvas.Right="70" Width="14" Height="14" Background="#BEBEBE" BorderBrush="#BEBEBE"/>
+            </Canvas>
+        </materialDesign:DrawerHost>
+    </Grid>
+</Window>
