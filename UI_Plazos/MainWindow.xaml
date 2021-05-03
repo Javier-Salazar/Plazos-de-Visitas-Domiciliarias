@@ -320,6 +320,14 @@
             </materialDesign:DialogHost.DialogContent>
             <Canvas>
                 <Button x:Name="Delete" Content="Eliminar contribuyente" Style="{StaticResource MaterialDesignRaisedButton}" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Canvas.Bottom="20" Canvas.Left="70" BorderBrush="Red" Background="Red" Visibility="Collapsed"/>
+                <Menu IsMainMenu="True">
+                    <MenuItem Header="_Archivo">
+                        <MenuItem x:Name="respaldar" Header="Respaldar" Icon="{materialDesign:PackIcon Kind=ContentSave}" Click="respaldar_Click"/>
+                        <MenuItem x:Name="restaurar" Header="Restaurar" Icon="{materialDesign:PackIcon Kind=BackupRestore}" Click="restaurar_Click"/>
+                        <Separator />
+                        <MenuItem x:Name="salir" Header="Exit" Icon="{materialDesign:PackIcon Kind=ExitToApp}" Click="salir_Click"/>
+                    </MenuItem>
+                </Menu>
             </Canvas>
         </materialDesign:DialogHost>
     </Grid>

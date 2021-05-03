@@ -20,7 +20,6 @@ namespace UI_Plazos
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
-    /// respaldar y restaurar
     /// </summary>
 
     public partial class MainWindow : Window
@@ -80,24 +79,7 @@ namespace UI_Plazos
 
         private void Create_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog save = new SaveFileDialog();
-            save.FileName = "PlazosVisitaDomiciliaria-Backup";
-            save.DefaultExt = "xml";
-            save.Filter = "Archivo de Datos (*.xml)|*.xml";
-            save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            if (save.ShowDialog() == true)
-            {
-                FileInfo info = new FileInfo(save.FileName);
-                bool saved = xml.FileBackUp(info.DirectoryName);
-                if (saved)
-                {
-                    UI_ToastAlert.ShowAlert("Respaldado!", "Se ha realizado una copia de respaldo.", AlertType.success);
-                }
-                else
-                {
-                    UI_ToastAlert.ShowAlert("Error!", "Fallo al intentar respaldar.", AlertType.error);
-                }
-            }
+            
             //GenerateDates();
         }
 
@@ -170,6 +152,21 @@ namespace UI_Plazos
             xml.Delete(index);
             UAP.Items.RemoveAt(index);
             UI_ToastAlert.ShowAlert("Borrado Exitosamente!", "Se ha eliminado el contribuyente.", AlertType.success);
+        }
+
+        private void respaldar_Click(object sender, RoutedEventArgs e)
+        {
+            RespaldarDatos();
+        }
+
+        private void restaurar_Click(object sender, RoutedEventArgs e)
+        {
+            RestaurarDatos();
+        }
+
+        private void salir_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
 
         //Main method to generate all dates
@@ -1089,6 +1086,48 @@ namespace UI_Plazos
             new_label.FontSize = 14;
             new_label.FontFamily = new FontFamily("Century Gothic");
             vencio.Children.Add(new_label);
+        }
+
+        private void RespaldarDatos()
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.FileName = "PlazosVisitaDomiciliaria-Backup";
+            save.DefaultExt = "xml";
+            save.Filter = "Archivo de Datos (*.xml)|*.xml";
+            save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (save.ShowDialog() == true)
+            {
+                FileInfo info = new FileInfo(save.FileName);
+                bool saved = xml.FileBackUp(info.DirectoryName);
+                if (saved)
+                {
+                    UI_ToastAlert.ShowAlert("Respaldado!", "Se ha realizado una copia de respaldo.", AlertType.success);
+                }
+                else
+                {
+                    UI_ToastAlert.ShowAlert("Error!", "Fallo al intentar respaldar.", AlertType.error);
+                }
+            }
+        }
+
+        private void RestaurarDatos()
+        {
+            OpenFileDialog open = new OpenFileDialog();
+            open.DefaultExt = "xml";
+            open.Filter = "Archivo de Datos (*.xml)|*.xml";
+            open.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (open.ShowDialog() == true)
+            {
+                bool restored = xml.FileRestore("");
+                if (restored)
+                {
+                    UI_ToastAlert.ShowAlert("Respaldado!", "Se ha realizado una copia de respaldo.", AlertType.success);
+                }
+                else
+                {
+                    UI_ToastAlert.ShowAlert("Error!", "Fallo al intentar respaldar.", AlertType.error);
+                }
+            }
         }
     }
 }

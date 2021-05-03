@@ -229,6 +229,23 @@ namespace UI_Plazos
             }
             return saved;
         }
+
+        public bool FileRestore(string _detination_file)
+        {
+            bool saved = false;
+            try
+            {
+                string original_source = System.IO.Path.Combine(path);
+                string backup_source = System.IO.Path.Combine(_detination_file, "PlazosVisitaDomiciliaria-Backup.xml");
+                System.IO.File.Copy(original_source, backup_source, true); //Copy de the original file in the new direction.
+                saved = true;
+            }
+            catch (Exception)
+            {
+                saved = false;
+            }
+            return saved;
+        }
     }
 
     public class AddLabel
