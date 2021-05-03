@@ -18,7 +18,7 @@ namespace UI_Plazos
             string _levantamiento_uap, string _vence_uap, string _levantamiento_acta_final, string _dias_estrados,
             string _vence_plazo, string _dias_sobrantes, string _liquidacion, string _entrega_borrador_liquidacion,
             string _entrega_liquidacion, string _recepcion_liquidacion, string _segunda_vuelta_liquidacion,
-            string _impresion_firma, string _fecha_cierre)
+            string _impresion_firma, string _fecha_cierre, string _plazo_prodecon)
         {
             document.Load(path);
             XmlNode _contribuyente_ = document.CreateElement("Contribuyente");
@@ -73,6 +73,8 @@ namespace UI_Plazos
             impresion_firma.InnerText = _impresion_firma;
             XmlNode fecha_cierre = document.CreateElement("FechaCierre");
             fecha_cierre.InnerText = _fecha_cierre;
+            XmlNode plazo_prodecon = document.CreateElement("PlazoProdecon");
+            plazo_prodecon.InnerText = _plazo_prodecon;
 
             _contribuyente_.AppendChild(id);
             _contribuyente_.AppendChild(contribuyente);
@@ -99,6 +101,7 @@ namespace UI_Plazos
             _contribuyente_.AppendChild(segunda_vuelta_liquidacion);
             _contribuyente_.AppendChild(impresion_firma);
             _contribuyente_.AppendChild(fecha_cierre);
+            _contribuyente_.AppendChild(plazo_prodecon);
 
             document.SelectSingleNode("VisitaDomiciliaria").AppendChild(_contribuyente_);
             document.Save(path);
@@ -138,7 +141,8 @@ namespace UI_Plazos
                     recepcion_liquidacion = unContribuyente.SelectSingleNode("RecepcionLiquidacion").InnerText,
                     segunda_vuelta_liquidacion = unContribuyente.SelectSingleNode("SegundaVueltaLiquidacion").InnerText,
                     impresion_firma = unContribuyente.SelectSingleNode("ImpresionFirma").InnerText,
-                    fecha_cierre = unContribuyente.SelectSingleNode("FechaCierre").InnerText
+                    fecha_cierre = unContribuyente.SelectSingleNode("FechaCierre").InnerText,
+                    plazo_prodecon = unContribuyente.SelectSingleNode("PlazoProdecon").InnerText
                 });
             }
             return item;
@@ -173,14 +177,14 @@ namespace UI_Plazos
             string _levantamiento_uap, string _vence_uap, string _levantamiento_acta_final, string _dias_estrados,
             string _vence_plazo, string _dias_sobrantes, string _liquidacion, string _entrega_borrador_liquidacion,
             string _entrega_liquidacion, string _recepcion_liquidacion, string _segunda_vuelta_liquidacion,
-            string _impresion_firma, string _fecha_cierre)
+            string _impresion_firma, string _fecha_cierre, string _plazo_prodecon)
         {
             document.Load(path);
             XmlNode nuevoContribuyente = Add(_index, _contribuyente, _fecha_inicio, _plazo_extendido, _entrega_expediente, 
                 _comite, _notificacion_atenta, _vencimiento_10_dias, _entrega_borrador_uap, _entrega_uap, _recepcion_uap,
                 _sengunda_vuelta_uap, _levantamiento_uap, _vence_uap, _levantamiento_acta_final, _dias_estrados, 
                 _vence_plazo, _dias_sobrantes, _liquidacion, _entrega_borrador_liquidacion, _entrega_liquidacion, 
-                _recepcion_liquidacion, _segunda_vuelta_liquidacion, _impresion_firma, _fecha_cierre);
+                _recepcion_liquidacion, _segunda_vuelta_liquidacion, _impresion_firma, _fecha_cierre, _plazo_prodecon);
 
             foreach (XmlNode item in document.DocumentElement.ChildNodes)
             {

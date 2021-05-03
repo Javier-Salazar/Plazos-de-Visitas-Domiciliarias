@@ -33,5 +33,6 @@ namespace UI_Plazos
         public string segunda_vuelta_liquidacion { get; set; }
         public string impresion_firma { get; set; }
         public string fecha_cierre { get; set; }
+        public string plazo_prodecon { get; set; }
     }
 }

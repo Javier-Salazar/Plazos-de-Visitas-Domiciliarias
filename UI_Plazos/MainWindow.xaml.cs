@@ -18,6 +18,9 @@ namespace UI_Plazos
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// 
+    /// respaldar y restaurar
+    /// levantamiento del acta final -> 20 dias habiles
     /// </summary>
 
     public partial class MainWindow : Window
@@ -35,7 +38,8 @@ namespace UI_Plazos
                 {
                     UAP.Items.Insert(0, dato); //Insert on top (0).
                 }
-                fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(1, 1, 1), DateTime.Today.AddDays(-1)));
+                int year = DateTime.Today.Year - 1;
+                fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(1, 1, 1), new DateTime(year, 12, 31)));
                 for (int i = 2021; i < 3000; i++)
                 {
                     fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 1, 1), new DateTime(i, 1, 1)));
@@ -44,20 +48,7 @@ namespace UI_Plazos
                     fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 9, 16), new DateTime(i, 9, 16)));
                     fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 10, 12), new DateTime(i, 10, 12)));
                     fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 11, 2), new DateTime(i, 11, 2)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 12), new DateTime(i, 12, 18)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 25), new DateTime(i, 12, 19)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 12), new DateTime(i, 12, 20)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 25), new DateTime(i, 12, 21)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 12), new DateTime(i, 12, 22)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 25), new DateTime(i, 12, 23)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 12), new DateTime(i, 12, 24)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 25), new DateTime(i, 12, 25)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 12), new DateTime(i, 12, 26)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 25), new DateTime(i, 12, 27)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 12), new DateTime(i, 12, 28)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 25), new DateTime(i, 12, 29)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 12), new DateTime(i, 12, 30)));
-                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 25), new DateTime(i, 12, 31)));
+                    fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 18), new DateTime(i, 12, 31)));
                 }
             }
             catch(Exception)
@@ -209,6 +200,7 @@ namespace UI_Plazos
                     item.dias_estrados = FechaDiasEstresados(date);
                     item.liquidacion = FechaLiquidacion(date).ToString("D");
                     item.entrega_borrador_liquidacion = FechaEntregaBorradorLiquidacion(date).ToString("D");
+                    item.plazo_prodecon = FechaPlazoProdecon(date).ToString("D");
                     date = Convert.ToDateTime(item.entrega_borrador_liquidacion);
                     item.entrega_liquidacion = FechaEntregaLiquidacion(date).ToString("D");
                     date = Convert.ToDateTime(item.entrega_liquidacion);
@@ -228,7 +220,8 @@ namespace UI_Plazos
                         item.recepcion_uap, item.sengunda_vuelta_uap, item.levantamiento_uap, item.vence_uap,
                         item.levantamiento_acta_final, item.dias_estrados, item.vence_plazo, item.dias_sobrantes,
                         item.liquidacion, item.entrega_borrador_liquidacion, item.entrega_liquidacion,
-                        item.recepcion_liquidacion, item.segunda_vuelta_liquidacion, item.impresion_firma, item.fecha_cierre);
+                        item.recepcion_liquidacion, item.segunda_vuelta_liquidacion, item.impresion_firma, item.fecha_cierre,
+                        item.plazo_prodecon);
 
                     //AutoRwsize Columns.
                     foreach (GridViewColumn c in header.Columns)
@@ -730,6 +723,22 @@ namespace UI_Plazos
             return _date;
         }
 
+        private DateTime FechaPlazoProdecon(DateTime _date)
+        {
+            DateTime aux = _date;
+            _date = _date.AddDays(20);
+            int dias_faltantes = DiasHabilesFaltantes(aux, _date);
+            aux = _date;
+            _date = _date.AddDays(dias_faltantes);
+            while (dias_faltantes > 0)
+            {
+                dias_faltantes = DiasHabilesFaltantes(aux, _date);
+                aux = _date;
+                _date = _date.AddDays(dias_faltantes);
+            }
+            return _date;
+        }
+
         private DateTime FechaCierre(DateTime _date)
         {
             int month = _date.Month;
@@ -825,7 +834,7 @@ namespace UI_Plazos
             string _levantamiento_uap, string _vence_uap, string _levantamiento_acta_final, string _dias_estrados,
             string _vence_plazo, string _dias_sobrantes, string _liquidacion, string _entrega_borrador_liquidacion,
             string _entrega_liquidacion, string _recepcion_liquidacion, string _segunda_vuelta_liquidacion,
-            string _impresion_firma, string _fecha_cierre)
+            string _impresion_firma, string _fecha_cierre, string _plazo_prodecon)
         {
             if(_index == -1)
             {
@@ -856,7 +865,8 @@ namespace UI_Plazos
                     recepcion_liquidacion = _recepcion_liquidacion,
                     segunda_vuelta_liquidacion = _segunda_vuelta_liquidacion,
                     impresion_firma = _impresion_firma,
-                    fecha_cierre = _fecha_cierre
+                    fecha_cierre = _fecha_cierre,
+                    plazo_prodecon = _plazo_prodecon
                 });
 
                 xml.Add(xml.ReadIndex(), _contribuyente, _fecha_inicio, _plazo_extendido, _entrega_expediente, _comite, 
@@ -864,7 +874,7 @@ namespace UI_Plazos
                     _sengunda_vuelta_uap, _levantamiento_uap, _vence_uap, _levantamiento_acta_final, _dias_estrados, 
                     _vence_plazo, _dias_sobrantes, _liquidacion, _entrega_borrador_liquidacion, _entrega_liquidacion, 
                     _recepcion_liquidacion, _segunda_vuelta_liquidacion, _impresion_firma,
-                    _fecha_cierre);
+                    _fecha_cierre, _plazo_prodecon);
             }
             else
             {
@@ -894,7 +904,8 @@ namespace UI_Plazos
                     recepcion_liquidacion = _recepcion_liquidacion,
                     segunda_vuelta_liquidacion = _segunda_vuelta_liquidacion,
                     impresion_firma = _impresion_firma,
-                    fecha_cierre = _fecha_cierre
+                    fecha_cierre = _fecha_cierre,
+                    plazo_prodecon = _plazo_prodecon
                 });
 
                 UAP.Items.Remove(UAP.SelectedItem);
@@ -903,7 +914,7 @@ namespace UI_Plazos
                     _notificacion_atenta, _vencimiento_10_dias, _entrega_borrador_uap, _entrega_uap, _recepcion_uap,
                     _sengunda_vuelta_uap, _levantamiento_uap, _vence_uap, _levantamiento_acta_final, _dias_estrados,
                     _vence_plazo, _dias_sobrantes, _liquidacion, _entrega_borrador_liquidacion, _entrega_liquidacion,
-                    _recepcion_liquidacion, _segunda_vuelta_liquidacion, _impresion_firma, _fecha_cierre);
+                    _recepcion_liquidacion, _segunda_vuelta_liquidacion, _impresion_firma, _fecha_cierre, _plazo_prodecon);
             }
             
         }

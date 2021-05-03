@@ -169,7 +169,7 @@
                             <GridViewColumn Header="Segunda vuelta liquidación" Width="auto" DisplayMemberBinding="{Binding segunda_vuelta_liquidacion}"/>
                             <GridViewColumn Header="Impresión y envío a firma" Width="auto" DisplayMemberBinding="{Binding impresion_firma}"/>
                             <GridViewColumn Header="Fecha de cierre" Width="auto" DisplayMemberBinding="{Binding fecha_cierre}"/>
-                            <GridViewColumn Header="Plazo de prodecon para notificar la liquidación" Width="auto" DisplayMemberBinding="{Binding plazo_prodecon}"/>
+                            <GridViewColumn Header="Plazo de PRODECON para notificar la liquidación" Width="auto" DisplayMemberBinding="{Binding plazo_prodecon}"/>
                             <GridView.ColumnHeaderContainerStyle>
                                 <Style TargetType="GridViewColumnHeader">
                                     <Setter Property="HorizontalContentAlignment" Value="Left" />
