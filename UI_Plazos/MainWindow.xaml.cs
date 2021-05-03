@@ -1119,16 +1119,47 @@ namespace UI_Plazos
             open.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (open.ShowDialog() == true)
             {
-                bool restored = xml.FileRestore("");
-                if (restored)
+                FileInfo info = new FileInfo(open.FileName);
+                foreach (var duplicate in xml.CheckDuplicates(info.FullName))
                 {
-                    UI_ToastAlert.ShowAlert("Respaldado!", "Se ha realizado una copia de respaldo.", AlertType.success);
+                    if (duplicate)
+                    {
+                        duplicados.IsOpen = true;
+                    }
                 }
-                else
-                {
-                    UI_ToastAlert.ShowAlert("Error!", "Fallo al intentar respaldar.", AlertType.error);
-                }
+
+                //if (restored)
+                //{
+                //    //UI_ToastAlert.ShowAlert("Respaldado!", "Se ha realizado una copia de respaldo.", AlertType.success);
+                //}
+                //else
+                //{
+                //    UI_ToastAlert.ShowAlert("No se pudo restaurar!", "Fallo al intentar respaldar.", AlertType.error);
+                //}
             }
+        }
+
+        private void deleteDuplicates_Click(object sender, RoutedEventArgs e)
+        {
+            if(OpcionesRestaurar.Visibility == Visibility.Visible)
+            {
+                OpcionesRestaurarIcono.Visibility = Visibility.Collapsed;
+                OpcionesRestaurar.Visibility = Visibility.Collapsed;
+                LoadRestore.Visibility = Visibility.Visible;
+                DispatcherTimer loading = new DispatcherTimer();
+                loading.Tick += new EventHandler(Load_timer_Tick);
+                loading.Interval = new TimeSpan(0, 0, 2);
+                loading.Start();
+            }
+        }
+
+        private void Load_timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            duplicados.IsOpen = false;
+            OpcionesRestaurarIcono.Visibility = Visibility.Collapsed;
+            OpcionesRestaurar.Visibility = Visibility.Collapsed;
+            LoadRestore.Visibility = Visibility.Collapsed;
         }
     }
 }

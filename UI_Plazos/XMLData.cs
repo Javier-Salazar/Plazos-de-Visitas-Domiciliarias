@@ -1,10 +1,12 @@
-﻿using Microsoft.Win32;
+﻿using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace UI_Plazos
 {
@@ -22,7 +24,7 @@ namespace UI_Plazos
             string _impresion_firma, string _fecha_cierre, string _plazo_prodecon)
         {
             document.Load(path);
-            XmlNode _contribuyente_ = document.CreateElement("Contribuyente");
+            XmlNode _contribuyente_ = document.CreateElement("Contribuyentes");
 
             XmlNode id = document.CreateElement("Id");
             id.InnerText = Convert.ToString(_index);
@@ -232,19 +234,68 @@ namespace UI_Plazos
 
         public bool FileRestore(string _detination_file)
         {
-            bool saved = false;
+            bool restored = false;
             try
             {
-                string original_source = System.IO.Path.Combine(path);
-                string backup_source = System.IO.Path.Combine(_detination_file, "PlazosVisitaDomiciliaria-Backup.xml");
-                System.IO.File.Copy(original_source, backup_source, true); //Copy de the original file in the new direction.
-                saved = true;
+                var original = XDocument.Load(path);
+                var backup_file = XDocument.Load(_detination_file);
+
+                //original.Root.Add(backup_file.Root.Elements());
+                //original.Save(path);
+
+                backup_file.Root.Add(original.Root.Elements());
+                backup_file.Save(_detination_file);
+
+                restored = true;
             }
             catch (Exception)
             {
-                saved = false;
+                restored = false;
             }
-            return saved;
+            return restored;
+        }
+
+        public List<bool> CheckDuplicates(string _detination_file)
+        {
+            List<bool> duplicates = new List<bool>();
+            try
+            {
+                document.Load(_detination_file);
+                XmlNodeList list = document.GetElementsByTagName("Id");
+                XmlNodeList list_contribuyente = document.GetElementsByTagName("Contribuyente");
+                XmlNodeList list_fecha_inicial = document.GetElementsByTagName("FechaInicio");
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if(i != Convert.ToInt32(list[i].InnerXml))
+                    {
+                        list[i].InnerXml = Convert.ToString(i);
+                    }
+                }
+
+                duplicates.Add(false); //Do this because de dublicates begin at position 1 not 0, so this add position 0.
+                for (int i = 0; i < list_contribuyente.Count; i++)
+                {
+                    for (int j = i + 1; j < list_contribuyente.Count; j++)
+                    {
+                        if ((list_contribuyente[i].InnerXml == list_contribuyente[j].InnerXml) && (list_fecha_inicial[i].InnerXml == list_fecha_inicial[j].InnerXml))
+                        {
+                            duplicates.Add(true);
+                        }
+                        else
+                        {
+                            duplicates.Add(false);
+                        }
+                    }
+                }
+
+                document.Save(_detination_file);
+            }
+            catch (Exception)
+            {
+
+            }
+            return duplicates;
         }
     }
 

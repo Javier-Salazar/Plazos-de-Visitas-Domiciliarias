@@ -330,5 +330,43 @@
                 </Menu>
             </Canvas>
         </materialDesign:DialogHost>
+        <materialDesign:DialogHost DialogClosing="DialogHost_DialogClosing" DialogTheme="Inherit" x:Name="duplicados" IsOpen="False">
+            <materialDesign:DialogHost.DialogContent>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="16 16 0 16" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="OpcionesRestaurarIcono">
+                        <materialDesign:PackIcon Kind="FolderInformationOutline" Width="64" Height="64"/>
+                    </StackPanel>
+                    <StackPanel Margin="16" Grid.Column="1" Name="OpcionesRestaurar">
+                        <TextBlock Text="Existen Elementos duplicados ¿Deseas Eliminarlos?" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Left" FontSize="16" HorizontalAlignment="Stretch" Margin="0 8 0 8"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button x:Name="deleteDuplicates" Style="{StaticResource MaterialDesignFlatButton}" IsDefault="True" Margin="0 8 8 0" Content="Aceptar" Click="deleteDuplicates_Click">
+                                <Button.CommandParameter>
+                                    <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                        True
+                                    </system:Boolean>
+                                </Button.CommandParameter>
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Margin="0 8 8 0" Content="Cancelar" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                                <Button.CommandParameter>
+                                    <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                        False
+                                    </system:Boolean>
+                                </Button.CommandParameter>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Margin="16" Grid.Column="1" Visibility="Collapsed" Name="LoadRestore">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="0" IsIndeterminate="True" VerticalAlignment="Top" HorizontalAlignment="Center" Height="24" Width="24"/>
+                        </StackPanel>
+                        <TextBlock Text="Restaurando datos" TextWrapping="NoWrap" TextAlignment="Center" FontSize="16" HorizontalAlignment="Stretch" Margin="0 8 0 8"/>
+                    </StackPanel>
+                </Grid>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
     </Grid>
 </Window>
