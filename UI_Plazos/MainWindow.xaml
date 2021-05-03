@@ -46,13 +46,13 @@
                                         <Label Name="nombreEmpty" Content="**" FontSize="14" Foreground="Red" Visibility="Collapsed"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal">
-                                        <TextBox x:Name="nombreContribuyente" materialDesign:HintAssist.Hint="Nombre del contribuyente" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="14 0 5 0" FontSize="12" MaxWidth="165"  FlowDirection="LeftToRight"/>
+                                        <TextBox x:Name="nombreContribuyente" materialDesign:HintAssist.Hint="Nombre del contribuyente" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="14 0 5 0" FontSize="12" MaxWidth="165"  FlowDirection="LeftToRight" GotFocus="nombreContribuyente_GotFocus"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
                                         <Label Name="pickerEmpty" Content="**" FontSize="14" Foreground="Red" Visibility="Collapsed"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" FlowDirection="LeftToRight">
-                                        <DatePicker Name="fecha" Width="auto" materialDesign:HintAssist.Hint="Elegir fecha" HorizontalAlignment="Left" SelectedDateFormat="Long" IsTodayHighlighted="True" FirstDayOfWeek="Sunday" VerticalAlignment="Top" Style="{StaticResource MaterialDesignOutlinedDatePicker}">
+                                        <DatePicker Name="fecha" Width="auto" materialDesign:HintAssist.Hint="Elegir fecha" HorizontalAlignment="Left" SelectedDateFormat="Long" IsTodayHighlighted="True" FirstDayOfWeek="Sunday" VerticalAlignment="Top" Style="{StaticResource MaterialDesignOutlinedDatePicker}" GotFocus="fecha_GotFocus">
                                             <DatePicker.BlackoutDates>
                                                 <CalendarDateRange Start="02/01/2021" End="02/01/2021"/>
                                                 <CalendarDateRange Start="03/15/2021" End="03/15/2021"/>
@@ -99,6 +99,8 @@
                             <Setter Property="FontFamily" Value="Century Gothic"/>
                             <Setter Property="FontWeight" Value="Regular"/>
                             <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+                            <EventSetter Event="KeyDown" Handler="ListViewItem_KeyDown"/>
+                            <EventSetter Event="GotFocus" Handler="ListViewItem_GotFocus"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
@@ -167,6 +169,7 @@
                             <GridViewColumn Header="Segunda vuelta liquidación" Width="auto" DisplayMemberBinding="{Binding segunda_vuelta_liquidacion}"/>
                             <GridViewColumn Header="Impresión y envío a firma" Width="auto" DisplayMemberBinding="{Binding impresion_firma}"/>
                             <GridViewColumn Header="Fecha de cierre" Width="auto" DisplayMemberBinding="{Binding fecha_cierre}"/>
+                            <GridViewColumn Header="Plazo de prodecon para notificar la liquidación" Width="auto" DisplayMemberBinding="{Binding plazo_prodecon}"/>
                             <GridView.ColumnHeaderContainerStyle>
                                 <Style TargetType="GridViewColumnHeader">
                                     <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -284,5 +287,40 @@
                 <Button x:Name="status" Command="{x:Static materialDesign:DrawerHost.OpenDrawerCommand}" CommandParameter="{x:Static Dock.Right}" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" ToolTip="Plazos próximos a vencer" Canvas.Bottom="37" Canvas.Right="70" Width="14" Height="14" Background="#BEBEBE" BorderBrush="#BEBEBE"/>
             </Canvas>
         </materialDesign:DrawerHost>
+        <materialDesign:DialogHost DialogClosing="DialogHost_DialogClosing" DialogTheme="Inherit">
+            <materialDesign:DialogHost.DialogContent>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="16 16 0 16" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <materialDesign:PackIcon Kind="AlertOutline" Width="64" Height="64"/>
+                    </StackPanel>
+                    <StackPanel Margin="16" Grid.Column="1">
+                        <TextBlock Text="¿Estas seguro de eliminar el elemento?" TextAlignment="Left" FontSize="16" HorizontalAlignment="Stretch" Margin="0 8 0 8"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button x:Name="deleteItem" Style="{StaticResource MaterialDesignFlatButton}" IsDefault="True" Margin="0 8 8 0" Content="Aceptar" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Click="deleteItem_Click">
+                                <Button.CommandParameter>
+                                    <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                        True
+                                    </system:Boolean>
+                                </Button.CommandParameter>
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Margin="0 8 8 0" Content="Cancelar" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                                <Button.CommandParameter>
+                                    <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                        False
+                                    </system:Boolean>
+                                </Button.CommandParameter>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </materialDesign:DialogHost.DialogContent>
+            <Canvas>
+                <Button x:Name="Delete" Content="Eliminar contribuyente" Style="{StaticResource MaterialDesignRaisedButton}" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Canvas.Bottom="20" Canvas.Left="70" BorderBrush="Red" Background="Red" Visibility="Collapsed"/>
+            </Canvas>
+        </materialDesign:DialogHost>
     </Grid>
 </Window>

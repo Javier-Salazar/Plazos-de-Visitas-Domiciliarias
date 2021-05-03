@@ -60,7 +60,7 @@ namespace UI_Plazos
                     fecha.BlackoutDates.Add(new CalendarDateRange(new DateTime(i, 12, 25), new DateTime(i, 12, 31)));
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 UI_ToastAlert.ShowAlert("Error al cargar!", "Algunos datos no se cargaron correctamente", AlertType.error);
             }
@@ -84,6 +84,7 @@ namespace UI_Plazos
         private void extendido_Checked(object sender, RoutedEventArgs e)
         {
             modoPlazo.Content = "Plazo extendido activado";
+            Delete.Visibility = Visibility.Collapsed;
         }
 
         private void Create_Click(object sender, RoutedEventArgs e)
@@ -94,10 +95,12 @@ namespace UI_Plazos
         private void extendido_Unchecked(object sender, RoutedEventArgs e)
         {
             modoPlazo.Content = "Plazo extendido desactivado";
+            Delete.Visibility = Visibility.Collapsed;
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
+            Delete.Visibility = Visibility.Collapsed;
             GenerateDates(aux);
             Create.IsEnabled = true;
             Update.Visibility = Visibility.Collapsed;
@@ -109,6 +112,7 @@ namespace UI_Plazos
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            Delete.Visibility = Visibility.Collapsed;
             aux = -1;
             ClearFields();
             Create.IsEnabled = true;
@@ -118,12 +122,51 @@ namespace UI_Plazos
 
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            Delete.Visibility = Visibility.Collapsed;
             UpdateItem();
+        }
+
+        private void ListViewItem_KeyDown(object sender, KeyEventArgs e)
+        {
+            if((e.Key == Key.LeftShift))
+            {
+                Delete.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void fecha_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Delete.Visibility = Visibility.Collapsed;
+        }
+
+        private void nombreContribuyente_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Delete.Visibility = Visibility.Collapsed;
+        }
+
+        private void ListViewItem_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Delete.Visibility = Visibility.Collapsed;
+        }
+
+        private void DialogHost_DialogClosing(object sender, MaterialDesignThemes.Wpf.DialogClosingEventArgs eventArgs)
+        {
+            Delete.Visibility = Visibility.Collapsed;
+        }
+
+        private void deleteItem_Click(object sender, RoutedEventArgs e)
+        {
+            
+            int index = UAP.Items.IndexOf(UAP.SelectedItem);
+            xml.Delete(index);
+            UAP.Items.RemoveAt(index);
+            UI_ToastAlert.ShowAlert("Borrado Exitosamente!", "Se ha eliminado el contribuyente.", AlertType.success);
         }
 
         //Main method to generate all dates
         private void GenerateDates(int _index = -1)
         {
+            Delete.Visibility = Visibility.Collapsed;
             try
             {
                 bool pass = ComprobarCampos();
@@ -221,7 +264,7 @@ namespace UI_Plazos
                     UI_ToastAlert.ShowAlert("Faltan datos!", "Llene todos los campos marcados", AlertType.error);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 UI_ToastAlert.ShowAlert("Error!", "No se pudieron agregar los datos", AlertType.error);
             }
@@ -893,6 +936,7 @@ namespace UI_Plazos
             nombreContribuyente.Clear();
             fecha.SelectedDate = null;
             extendido.IsChecked = false;
+            Delete.Visibility = Visibility.Collapsed;
         }
 
         //Add days left
@@ -926,7 +970,7 @@ namespace UI_Plazos
                         green_alert++;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     UI_ToastAlert.ShowAlert("Acceso fallido", "No se pudo acceder a algunas fechas", AlertType.error);
                 }
