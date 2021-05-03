@@ -62,7 +62,7 @@ namespace UI_Plazos
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 5);
             timer.Start();
-            AlertasVencimientoDePlazos();
+            AlertasVencimientoDePlazos(); //Load notification if is necesary.
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -79,8 +79,7 @@ namespace UI_Plazos
 
         private void Create_Click(object sender, RoutedEventArgs e)
         {
-            
-            //GenerateDates();
+            GenerateDates();
         }
 
         private void extendido_Unchecked(object sender, RoutedEventArgs e)
@@ -147,7 +146,6 @@ namespace UI_Plazos
 
         private void deleteItem_Click(object sender, RoutedEventArgs e)
         {
-            
             int index = UAP.Items.IndexOf(UAP.SelectedItem);
             xml.Delete(index);
             UAP.Items.RemoveAt(index);
@@ -738,6 +736,7 @@ namespace UI_Plazos
             return _date;
         }
 
+        //Get the date 20 days after levantamiento de acta final date, but don't count weekends and days off.
         private DateTime FechaPlazoProdecon(DateTime _date)
         {
             DateTime aux = _date;
@@ -1088,6 +1087,7 @@ namespace UI_Plazos
             vencio.Children.Add(new_label);
         }
 
+        //Save the xml data in a xml file back up.
         private void RespaldarDatos()
         {
             SaveFileDialog save = new SaveFileDialog();
@@ -1098,7 +1098,7 @@ namespace UI_Plazos
             if (save.ShowDialog() == true)
             {
                 FileInfo info = new FileInfo(save.FileName);
-                bool saved = xml.FileBackUp(info.DirectoryName);
+                bool saved = xml.FileBackUp(info.DirectoryName, info.Name);
                 if (saved)
                 {
                     UI_ToastAlert.ShowAlert("Respaldado!", "Se ha realizado una copia de respaldo.", AlertType.success);
@@ -1110,6 +1110,7 @@ namespace UI_Plazos
             }
         }
 
+        //Restore the xml file back up.
         private void RestaurarDatos()
         {
             OpenFileDialog open = new OpenFileDialog();

@@ -213,13 +213,13 @@ namespace UI_Plazos
             document.Save(path);
         }
 
-        public bool FileBackUp(string _detination_file)
+        public bool FileBackUp(string _detination_file, string _file_name)
         {
             bool saved = false;
             try
             {
-                string original_source = System.IO.Path.Combine(path);
-                string backup_source = System.IO.Path.Combine(_detination_file, "PlazosVisitaDomiciliaria-Backup.xml");
+                string original_source = System.IO.Path.Combine(path); //Get the orginal source path and original file name.
+                string backup_source = System.IO.Path.Combine(_detination_file, _file_name); //Get the destination path and file name.
                 System.IO.File.Copy(original_source, backup_source, true); //Copy de the original file in the new direction.
                 saved = true;
             }
