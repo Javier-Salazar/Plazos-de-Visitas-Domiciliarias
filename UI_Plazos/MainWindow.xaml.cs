@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,9 +20,7 @@ namespace UI_Plazos
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
-    /// 
     /// respaldar y restaurar
-    /// levantamiento del acta final -> 20 dias habiles
     /// </summary>
 
     public partial class MainWindow : Window
@@ -80,7 +80,25 @@ namespace UI_Plazos
 
         private void Create_Click(object sender, RoutedEventArgs e)
         {
-            GenerateDates();
+            SaveFileDialog save = new SaveFileDialog();
+            save.FileName = "PlazosVisitaDomiciliaria-Backup";
+            save.DefaultExt = "xml";
+            save.Filter = "Archivo de Datos (*.xml)|*.xml";
+            save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (save.ShowDialog() == true)
+            {
+                FileInfo info = new FileInfo(save.FileName);
+                bool saved = xml.FileBackUp(info.DirectoryName);
+                if (saved)
+                {
+                    UI_ToastAlert.ShowAlert("Respaldado!", "Se ha realizado una copia de respaldo.", AlertType.success);
+                }
+                else
+                {
+                    UI_ToastAlert.ShowAlert("Error!", "Fallo al intentar respaldar.", AlertType.error);
+                }
+            }
+            //GenerateDates();
         }
 
         private void extendido_Unchecked(object sender, RoutedEventArgs e)
