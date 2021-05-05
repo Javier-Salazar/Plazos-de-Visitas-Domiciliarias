@@ -337,25 +337,15 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Margin="16 16 0 16" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="OpcionesRestaurarIcono">
+                    <StackPanel Margin="16 16 0 16" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="OpcionesRestaurarIcono" Visibility="Visible">
                         <materialDesign:PackIcon Kind="FolderInformationOutline" Width="64" Height="64"/>
                     </StackPanel>
-                    <StackPanel Margin="16" Grid.Column="1" Name="OpcionesRestaurar">
+                    <StackPanel Margin="16" Grid.Column="1" Name="OpcionesRestaurar" Visibility="Visible">
                         <TextBlock Text="Existen Elementos duplicados ¿Deseas Eliminarlos?" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Left" FontSize="16" HorizontalAlignment="Stretch" Margin="0 8 0 8"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button x:Name="deleteDuplicates" Style="{StaticResource MaterialDesignFlatButton}" IsDefault="True" Margin="0 8 8 0" Content="Aceptar" Click="deleteDuplicates_Click">
-                                <Button.CommandParameter>
-                                    <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
-                                        True
-                                    </system:Boolean>
-                                </Button.CommandParameter>
                             </Button>
-                            <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Margin="0 8 8 0" Content="Cancelar" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
-                                <Button.CommandParameter>
-                                    <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
-                                        False
-                                    </system:Boolean>
-                                </Button.CommandParameter>
+                            <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Margin="0 8 8 0" Content="Cancelar" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" x:Name="cancelar" Click="cancelar_Click">
                             </Button>
                         </StackPanel>
                     </StackPanel>

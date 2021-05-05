@@ -1,6 +1,4 @@
-﻿using MaterialDesignThemes.Wpf;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -240,11 +238,8 @@ namespace UI_Plazos
                 var original = XDocument.Load(path);
                 var backup_file = XDocument.Load(_detination_file);
 
-                //original.Root.Add(backup_file.Root.Elements());
-                //original.Save(path);
-
-                backup_file.Root.Add(original.Root.Elements());
-                backup_file.Save(_detination_file);
+                original.Root.Add(backup_file.Root.Elements());
+                original.Save(path);
 
                 restored = true;
             }
@@ -255,47 +250,119 @@ namespace UI_Plazos
             return restored;
         }
 
-        public List<bool> CheckDuplicates(string _detination_file)
+        public void AdjustIndex()
         {
-            List<bool> duplicates = new List<bool>();
             try
             {
-                document.Load(_detination_file);
+                document.Load(path);
                 XmlNodeList list = document.GetElementsByTagName("Id");
-                XmlNodeList list_contribuyente = document.GetElementsByTagName("Contribuyente");
-                XmlNodeList list_fecha_inicial = document.GetElementsByTagName("FechaInicio");
 
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if(i != Convert.ToInt32(list[i].InnerXml))
+                    if (i != Convert.ToInt32(list[i].InnerXml))
                     {
                         list[i].InnerXml = Convert.ToString(i);
                     }
                 }
+            }
+            catch (Exception)
+            {
 
-                duplicates.Add(false); //Do this because de dublicates begin at position 1 not 0, so this add position 0.
-                for (int i = 0; i < list_contribuyente.Count; i++)
+            }
+            document.Save(path);
+        }
+
+        public List<bool> CheckDuplicates()
+        {
+            List<bool> duplicates = new List<bool>();
+            try
+            {
+                document.Load(path);
+                XmlNodeList list_contribuyente = document.GetElementsByTagName("Contribuyente");
+                List<string> contribuyentes_auxiliar = new List<string>();
+                XmlNodeList list_fecha_inicial = document.GetElementsByTagName("FechaInicio");
+                List<string> fecha_auxiliar = new List<string>();
+
+                for (int i = 0; i < list_contribuyente.Count ; i++)
                 {
-                    for (int j = i + 1; j < list_contribuyente.Count; j++)
+                    string element = Convert.ToString(list_contribuyente[i].InnerText);
+                    if (contribuyentes_auxiliar.Contains(element))
                     {
-                        if ((list_contribuyente[i].InnerXml == list_contribuyente[j].InnerXml) && (list_fecha_inicial[i].InnerXml == list_fecha_inicial[j].InnerXml))
-                        {
-                            duplicates.Add(true);
-                        }
-                        else
-                        {
-                            duplicates.Add(false);
-                        }
+                        contribuyentes_auxiliar.Add("-1");
+                    }
+                    else
+                    {
+                        contribuyentes_auxiliar.Add(element);
                     }
                 }
 
-                document.Save(_detination_file);
+                for (int i = 0; i < list_fecha_inicial.Count; i++)
+                {
+                    string element = Convert.ToString(list_fecha_inicial[i].InnerText);
+                    if (fecha_auxiliar.Contains(element))
+                    {
+                        fecha_auxiliar.Add("-1");
+                    }
+                    else
+                    {
+                        fecha_auxiliar.Add(element);
+                    }
+                }
+
+                for (int i = 0; i < contribuyentes_auxiliar.Count; i++)
+                {
+                    if ((contribuyentes_auxiliar[i] == "-1") && (fecha_auxiliar[i] == "-1"))
+                    {
+                        duplicates.Add(true);
+                    }
+                    else
+                    {
+                        duplicates.Add(false);
+                    }
+                }
             }
             catch (Exception)
             {
 
             }
             return duplicates;
+        }
+
+        public void DeleteDuplicates(List<bool> _delete_duplicate_items)
+        {
+            List<int> index_items = new List<int>();
+            int index = 0;
+
+            foreach (var item in _delete_duplicate_items)
+            {
+                if (item)
+                {
+                    index_items.Add(index);
+                }
+                index++;
+            }
+            DeleteNode(index_items);
+            AdjustIndex();
+        }
+
+        public void DeleteNode(List<int> _index_items)
+        {
+            document.Load(path);
+            XmlNodeList item = document.DocumentElement.ChildNodes;
+
+            int index = _index_items[0];
+
+            for (int i = 0; i < document.DocumentElement.ChildNodes.Count; i++)
+            {
+                string id = document.GetElementsByTagName("Id")[i].InnerText;
+                if (id == Convert.ToString(index))
+                {
+                    document.DocumentElement.RemoveChild(item[i]);
+                    index++;
+                    i--;
+                }
+            }
+            document.Save(path);
         }
     }
 

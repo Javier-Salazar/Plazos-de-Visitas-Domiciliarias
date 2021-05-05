@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,8 @@ namespace UI_Plazos
         XMLData xml = new XMLData();
         int aux = -1; //This help us to send the index position on update event
         DispatcherTimer timer = new DispatcherTimer();
+        DispatcherTimer loading = new DispatcherTimer();
+        List<bool> delete_duplicate_items; //Use for get all items and now which item is duplicate.
 
         public MainWindow()
         {
@@ -159,6 +162,10 @@ namespace UI_Plazos
 
         private void restaurar_Click(object sender, RoutedEventArgs e)
         {
+            duplicados.IsOpen = false;
+            OpcionesRestaurarIcono.Visibility = Visibility.Visible;
+            OpcionesRestaurar.Visibility = Visibility.Visible;
+            LoadRestore.Visibility = Visibility.Collapsed;
             RestaurarDatos();
         }
 
@@ -246,7 +253,10 @@ namespace UI_Plazos
                     nombreEmpty.Visibility = Visibility.Collapsed;
                     pickerEmpty.Visibility = Visibility.Collapsed;
 
-                    UI_ToastAlert.ShowAlert("Fecha Agregada!", "La fecha se ha agregado exitosamente", AlertType.success);
+                    if(_index == -1)
+                    {
+                        UI_ToastAlert.ShowAlert("Fecha Agregada!", "La fecha se ha agregado exitosamente", AlertType.success);
+                    }
                     ClearFields();
                 }
                 else
@@ -1105,7 +1115,7 @@ namespace UI_Plazos
                 }
                 else
                 {
-                    UI_ToastAlert.ShowAlert("Error!", "Fallo al intentar respaldar.", AlertType.error);
+                    UI_ToastAlert.ShowAlert("Error!", "Falló al intentar respaldar.", AlertType.error);
                 }
             }
         }
@@ -1113,53 +1123,115 @@ namespace UI_Plazos
         //Restore the xml file back up.
         private void RestaurarDatos()
         {
+            delete_duplicate_items = new List<bool>(); //Use for get all items and now which item is duplicate.
             OpenFileDialog open = new OpenFileDialog();
             open.DefaultExt = "xml";
             open.Filter = "Archivo de Datos (*.xml)|*.xml";
             open.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
             if (open.ShowDialog() == true)
             {
                 FileInfo info = new FileInfo(open.FileName);
-                foreach (var duplicate in xml.CheckDuplicates(info.FullName))
+                bool restored = xml.FileRestore(info.FullName);
+                xml.AdjustIndex();
+
+                foreach (var duplicate in xml.CheckDuplicates())
                 {
                     if (duplicate)
                     {
                         duplicados.IsOpen = true;
                     }
+                    delete_duplicate_items.Add(duplicate);
                 }
 
-                //if (restored)
-                //{
-                //    //UI_ToastAlert.ShowAlert("Respaldado!", "Se ha realizado una copia de respaldo.", AlertType.success);
-                //}
-                //else
-                //{
-                //    UI_ToastAlert.ShowAlert("No se pudo restaurar!", "Fallo al intentar respaldar.", AlertType.error);
-                //}
+                if (restored && !duplicados.IsOpen)
+                {
+                    duplicados.IsOpen = true;
+                    OpcionesRestaurarIcono.Visibility = Visibility.Collapsed;
+                    OpcionesRestaurar.Visibility = Visibility.Collapsed;
+                    LoadRestore.Visibility = Visibility.Visible;
+
+                    loading.Tick += new EventHandler(Timer_Loading);
+                    loading.Interval = new TimeSpan(0, 0, 2);
+                    loading.Start();
+
+                    try
+                    {
+                        UAP.Items.Clear();
+                        foreach (var dato in xml.Read())
+                        {
+                            UAP.Items.Insert(0, dato); //Insert on top (0).
+                        }
+
+                        UI_ToastAlert.ShowAlert("Restaurado!", "Se ha cargado con éxito la restauración.", AlertType.success);
+                    }
+                    catch (Exception)
+                    {
+                        UI_ToastAlert.ShowAlert("No se pudo restaurar!", "Falló al intentar restaurar.", AlertType.error);
+                    }
+                }
+                else if (!restored && !duplicados.IsOpen)
+                {
+                    UI_ToastAlert.ShowAlert("No se pudo restaurar!", "Falló al intentar restaurar.", AlertType.error);
+                }
             }
         }
 
-        private void deleteDuplicates_Click(object sender, RoutedEventArgs e)
+        protected void deleteDuplicates_Click(object sender, RoutedEventArgs e)
         {
-            if(OpcionesRestaurar.Visibility == Visibility.Visible)
-            {
-                OpcionesRestaurarIcono.Visibility = Visibility.Collapsed;
-                OpcionesRestaurar.Visibility = Visibility.Collapsed;
-                LoadRestore.Visibility = Visibility.Visible;
-                DispatcherTimer loading = new DispatcherTimer();
-                loading.Tick += new EventHandler(Load_timer_Tick);
-                loading.Interval = new TimeSpan(0, 0, 2);
-                loading.Start();
-            }
-        }
-
-        private void Load_timer_Tick(object sender, EventArgs e)
-        {
-            timer.Stop();
-            duplicados.IsOpen = false;
             OpcionesRestaurarIcono.Visibility = Visibility.Collapsed;
             OpcionesRestaurar.Visibility = Visibility.Collapsed;
-            LoadRestore.Visibility = Visibility.Collapsed;
+            LoadRestore.Visibility = Visibility.Visible;
+
+            loading.Tick += new EventHandler(Timer_Loading);
+            loading.Interval = new TimeSpan(0, 0, 2);
+            loading.Start();
+
+            xml.DeleteDuplicates(delete_duplicate_items); //Delete all elmentes duplicates if the user is agree.
+
+            try
+            {
+                UAP.Items.Clear();
+
+                foreach (var dato in xml.Read())
+                {
+                    UAP.Items.Insert(0, dato); //Insert on top (0).
+                }
+
+                var t = Task.Run(async delegate
+                {
+                    await Task.Delay(1300);
+                });
+
+                UI_ToastAlert.ShowAlert("Restaurado!", "Se ha cargado con éxito la restauración.", AlertType.success);
+            }
+            catch (Exception)
+            {
+                UI_ToastAlert.ShowAlert("No se pudo restaurar!", "Falló al intentar restaurar.", AlertType.error);
+            }
+        }
+
+        private void Timer_Loading(object sender, EventArgs e)
+        {
+            loading.Stop();
+            duplicados.IsOpen = false;
+        }
+
+        private void cancelar_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                UAP.Items.Clear();
+                foreach (var dato in xml.Read())
+                {
+                    UAP.Items.Insert(0, dato); //Insert on top (0).
+                }
+                UI_ToastAlert.ShowAlert("Restaurado!", "Se ha cargado con éxito la restauración.", AlertType.success);
+            }
+            catch (Exception)
+            {
+                UI_ToastAlert.ShowAlert("No se pudo restaurar!", "Falló al intentar restaurar.", AlertType.error);
+            }
         }
     }
 }

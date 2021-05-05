@@ -9,7 +9,7 @@
         Title="Loading" Height="340" Width="610" ResizeMode="NoResize" WindowStyle="None"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="False" AllowsTransparency="True" Background="Transparent"
         Loaded="Window_Loaded">
-    
+
     <Border Height="300" Width="580" CornerRadius="4">
         <Border.Background>
             <LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
